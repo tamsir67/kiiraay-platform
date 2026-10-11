@@ -1,0 +1,17 @@
+# HTTPS local avec certificat de confiance pour localhost.
+# Le certificat est généré via mkcert et installé comme autorité locale Windows.
+http://{$DOMAINE} {
+  redir https://{host}{uri} permanent
+}
+
+https://{$DOMAINE} {
+  tls /certs/localhost.pem /certs/localhost-key.pem
+  encode gzip
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options nosniff
+    Referrer-Policy no-referrer
+    Permissions-Policy "geolocation=(self), camera=(), microphone=()"
+  }
+  reverse_proxy app:4000
+}
