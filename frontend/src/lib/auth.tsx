@@ -2,9 +2,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { api, setAccessToken, setOnSessionLost } from '../api/client';
 import { PERMISSIONS } from '@shared/referentiel.js';
 
-export type Role = 'ADMIN' | 'COORDONNATEUR' | 'SUPERVISEUR' | 'COMMISSAIRE' | 'OPERATEUR' | 'DECIDEUR';
+export type Role = 'ADMIN' | 'COORDONNATEUR' | 'SUPERVISEUR' | 'COMMISSAIRE' | 'OPERATEUR' | 'DECIDEUR' | 'MILITANT';
 export interface Utilisateur {
-  id: number; identifiant: string; nom: string; prenoms: string; role: Role; doit_changer_mdp: boolean;
+  id: number; identifiant: string; nom: string; prenoms: string; role: Role; militant_id?: string | null; doit_changer_mdp: boolean;
   perimetres: { commune_id: number; quartier_id: number | null }[]; permissions: string[];
 }
 

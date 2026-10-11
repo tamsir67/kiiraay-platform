@@ -4,12 +4,12 @@ import { api, ApiError } from '../api/client';
 import { Drawer, Field, Notice, messageErreur, useToast } from '../components/ui';
 import { useReferentiels, useResponsables, useTerritoires } from '../lib/hooks';
 import { useAuth } from '../lib/auth';
-import { normaliserTelephone } from '@shared/referentiel.js';
+import { normaliserNumeroCni, normaliserTelephone } from '@shared/referentiel.js';
 import { tel } from '../lib/format';
 
 type Form = Record<string, any>;
 const vide: Form = {
-  nom: '', prenoms: '', sexe: '', date_naissance: '', telephone: '', telephone2: '', email: '', adresse: '', repere: '',
+  nom: '', prenoms: '', sexe: '', date_naissance: '', numero_cni: '', telephone: '', telephone2: '', email: '', adresse: '', repere: '',
   commune_id: '', quartier_id: '', secteur_id: '', latitude: '', longitude: '',
   coordonnateur_id: '', superviseur_id: '', commissaire_id: '', source: 'TERRAIN', observations: '', information_personne: false,
 };
@@ -51,6 +51,7 @@ export function FormulaireMilitant({ initial, onClose, onSaved }: { initial: any
     if (!f.prenoms.trim()) e.prenoms = 'Prénom(s) obligatoire(s)';
     if (!f.sexe) e.sexe = 'Sexe obligatoire';
     if (!f.quartier_id) e.quartier_id = 'Quartier obligatoire';
+    if (f.numero_cni && !normaliserNumeroCni(f.numero_cni)) e.numero_cni = 'Saisissez les 13 chiffres de la carte d’identité sénégalaise';
     if (f.telephone && !normaliserTelephone(f.telephone)) e.telephone = 'Numéro invalide (ex. 77 123 45 67)';
     if (f.telephone2 && !normaliserTelephone(f.telephone2)) e.telephone2 = 'Numéro invalide';
     if ((f.latitude === '') !== (f.longitude === '')) e.latitude = 'Latitude et longitude vont ensemble';
@@ -64,7 +65,7 @@ export function FormulaireMilitant({ initial, onClose, onSaved }: { initial: any
     const body: any = { ...f, version: initial?.version };
     for (const k of ['quartier_id', 'secteur_id', 'coordonnateur_id', 'superviseur_id', 'commissaire_id']) body[k] = f[k] ? Number(f[k]) : null;
     for (const k of ['latitude', 'longitude']) body[k] = f[k] === '' ? null : Number(f[k]);
-    for (const k of ['date_naissance', 'telephone', 'telephone2', 'email', 'adresse', 'repere', 'observations', 'source']) body[k] = f[k] || null;
+    for (const k of ['date_naissance', 'numero_cni', 'telephone', 'telephone2', 'email', 'adresse', 'repere', 'observations', 'source']) body[k] = f[k] || null;
     delete body.commune_id;
     try {
       const r = edition
@@ -118,6 +119,9 @@ export function FormulaireMilitant({ initial, onClose, onSaved }: { initial: any
             </select>
           </Field>
           <Field label="Date de naissance" aide="Optionnelle" erreur={erreurs.date_naissance}>{input('date_naissance', { type: 'date', max: new Date().toISOString().slice(0, 10) })}</Field>
+          <Field label="Numéro carte d’identification" aide="13 chiffres, facultatif. Chiffré en base." erreur={erreurs.numero_cni}>
+            {input('numero_cni', { inputMode: 'numeric', autoComplete: 'off', placeholder: '1234567890123', maxLength: 15 })}
+          </Field>
         </div>
       </fieldset>
       <fieldset><legend>Coordonnées</legend>

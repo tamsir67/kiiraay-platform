@@ -9,6 +9,8 @@ import { exiger } from '../auth.js';
 import { journaliser } from '../audit.js';
 import { Where } from '../sql.js';
 import { ROLES, STATUTS, PERMISSIONS } from '../../../shared/referentiel.js';
+import { colonnesTelephone, dechiffrer } from '../crypto.js';
+import { normaliserTelephone } from '../../../shared/referentiel.js';
 
 export const router = Router();
 
@@ -41,6 +43,7 @@ const motDePasseTemporaire = () => {
 const schemaUtilisateur = z.object({
   identifiant: z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,60}$/, '3 à 60 caractères : lettres, chiffres, . _ -'),
   email: z.string().trim().email().optional().nullable().or(z.literal('').transform(() => null)),
+  telephone: z.string().trim().max(30).optional().nullable().or(z.literal('')).refine((t) => !t || normaliserTelephone(t), 'Numéro de téléphone invalide'),
   nom: z.string().trim().min(1).max(80),
   prenoms: z.string().trim().min(1).max(120),
   role: z.enum(Object.keys(ROLES)),
@@ -52,14 +55,18 @@ const schemaUtilisateur = z.object({
 
 router.get('/utilisateurs', exiger('utilisateurs:gerer'), asyncH(async (_req, res) => {
   const { rows } = await query(`
-    SELECT u.id, u.identifiant, u.email, u.nom, u.prenoms, u.role, u.actif, u.responsable_id, u.derniere_connexion,
+    SELECT u.id, u.identifiant, coalesce(u.email, m.email) AS email, u.nom, u.prenoms, u.role, u.actif, u.responsable_id, u.militant_id,
+           u.derniere_connexion, m.numero AS numero_militant, m.statut AS statut_militant,
+           coalesce(u.telephone_chiffre, m.telephone_chiffre, r.telephone_chiffre) AS telephone_chiffre,
            u.doit_changer_mdp, (u.verrouille_jusqua > now()) AS verrouille, u.created_at,
            coalesce(json_agg(json_build_object('commune_id', p.commune_id, 'commune', c.nom, 'quartier_id', p.quartier_id, 'quartier', q.nom))
              FILTER (WHERE p.commune_id IS NOT NULL), '[]') AS perimetres
     FROM utilisateurs u LEFT JOIN utilisateur_perimetres p ON p.utilisateur_id = u.id
+    LEFT JOIN militants m ON m.id = u.militant_id
+    LEFT JOIN responsables r ON r.id = u.responsable_id
     LEFT JOIN communes c ON c.id = p.commune_id LEFT JOIN quartiers q ON q.id = p.quartier_id
-    GROUP BY u.id ORDER BY u.role, u.nom`);
-  res.json(rows);
+    GROUP BY u.id, m.id, r.id ORDER BY u.role, u.nom`);
+  res.json(rows.map(({ telephone_chiffre, ...u }) => ({ ...u, telephone: dechiffrer(telephone_chiffre) })));
 }));
 
 async function ecrirePerimetres(client, id, perimetres) {
@@ -72,12 +79,15 @@ async function ecrirePerimetres(client, id, perimetres) {
 
 router.post('/utilisateurs', exiger('utilisateurs:gerer'), asyncH(async (req, res) => {
   const d = schemaUtilisateur.parse(req.body);
+  if (d.role === 'MILITANT') throw new HttpError(400, 'Les comptes militants sont créés par le formulaire d’inscription lié à une fiche');
   const temp = motDePasseTemporaire();
+  const telephone = colonnesTelephone(d.telephone);
   const id = await transaction(req.user, async (client) => {
     const { rows } = await client.query(
-      `INSERT INTO utilisateurs (identifiant, email, nom, prenoms, role, responsable_id, actif, mot_de_passe_hash, doit_changer_mdp)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true) RETURNING id`,
-      [d.identifiant, d.email || null, d.nom, d.prenoms, d.role, d.responsable_id || null, d.actif, await bcrypt.hash(temp, 12)]);
+      `INSERT INTO utilisateurs (identifiant, email, nom, prenoms, role, responsable_id, telephone_chiffre, telephone_index, actif, mot_de_passe_hash, doit_changer_mdp)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,true) RETURNING id`,
+      [d.identifiant, d.email || null, d.nom, d.prenoms, d.role, d.responsable_id || null, telephone.chiffre, telephone.index,
+        d.actif, await bcrypt.hash(temp, 12)]);
     await ecrirePerimetres(client, rows[0].id, d.perimetres);
     return rows[0].id;
   });
@@ -89,17 +99,33 @@ router.post('/utilisateurs', exiger('utilisateurs:gerer'), asyncH(async (req, re
 router.put('/utilisateurs/:id', exiger('utilisateurs:gerer'), asyncH(async (req, res) => {
   const d = schemaUtilisateur.parse(req.body);
   const id = Number(req.params.id);
+  const { rows: existant } = await query('SELECT role FROM utilisateurs WHERE id = $1', [id]);
+  if (!existant[0]) throw new HttpError(404, 'Utilisateur introuvable');
+  if (d.role === 'MILITANT' && existant[0].role !== 'MILITANT') throw new HttpError(400, 'Un compte militant doit être lié par le formulaire d’inscription');
+  const telephone = colonnesTelephone(d.telephone);
   if (id === req.user.id && (d.role !== 'ADMIN' || !d.actif)) throw new HttpError(400, 'Vous ne pouvez pas retirer vos propres droits d\'administration');
   await transaction(req.user, async (client) => {
     const { rowCount } = await client.query(
-      `UPDATE utilisateurs SET identifiant=$2, email=$3, nom=$4, prenoms=$5, role=$6, responsable_id=$7, actif=$8, updated_at=now() WHERE id=$1`,
-      [id, d.identifiant, d.email || null, d.nom, d.prenoms, d.role, d.responsable_id || null, d.actif]);
+      `UPDATE utilisateurs SET identifiant=$2, email=$3, nom=$4, prenoms=$5, role=$6, responsable_id=$7, actif=$8,
+        telephone_chiffre=$9, telephone_index=$10, updated_at=now() WHERE id=$1`,
+      [id, d.identifiant, d.email || null, d.nom, d.prenoms, d.role, d.responsable_id || null, d.actif,
+        telephone.chiffre, telephone.index]);
     if (!rowCount) throw new HttpError(404, 'Utilisateur introuvable');
     await ecrirePerimetres(client, id, d.perimetres);
     if (!d.actif) await client.query('UPDATE sessions SET revoque_le = now() WHERE utilisateur_id = $1 AND revoque_le IS NULL', [id]);
   });
   await journaliser(req, 'UTILISATEUR_MODIFICATION', { entite: 'utilisateur', entiteId: id, details: { role: d.role, actif: d.actif } });
   res.json({ ok: true });
+}));
+
+router.delete('/utilisateurs/:id', exiger('utilisateurs:gerer'), asyncH(async (req, res) => {
+  const id = Number(req.params.id);
+  if (id === req.user.id) throw new HttpError(400, 'Vous ne pouvez pas désactiver votre propre compte');
+  const { rowCount } = await query('UPDATE utilisateurs SET actif = false, updated_at = now() WHERE id = $1 AND actif', [id]);
+  if (!rowCount) throw new HttpError(404, 'Utilisateur introuvable ou déjà désactivé');
+  await query('UPDATE sessions SET revoque_le = now() WHERE utilisateur_id = $1 AND revoque_le IS NULL', [id]);
+  await journaliser(req, 'UTILISATEUR_DESACTIVATION', { entite: 'utilisateur', entiteId: id });
+  res.status(204).end();
 }));
 
 router.post('/utilisateurs/:id/reinitialiser', exiger('utilisateurs:gerer'), asyncH(async (req, res) => {

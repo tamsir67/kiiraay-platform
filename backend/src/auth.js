@@ -4,7 +4,7 @@ import { query } from './db.js';
 import { can } from '../../shared/referentiel.js';
 import { HttpError } from './errors.js';
 
-const ROLES_PERIMETRE_OBLIGATOIRE = new Set(['COORDONNATEUR', 'SUPERVISEUR', 'COMMISSAIRE']);
+const ROLES_PERIMETRE_OBLIGATOIRE = new Set(['COORDONNATEUR', 'SUPERVISEUR', 'COMMISSAIRE', 'MILITANT']);
 
 export function signerAcces(user) {
   return jwt.sign({ sub: String(user.id), role: user.role }, config.jwtSecret, {
@@ -14,7 +14,7 @@ export function signerAcces(user) {
 
 export async function chargerUtilisateur(id) {
   const { rows } = await query(
-    `SELECT u.id, u.identifiant, u.nom, u.prenoms, u.email, u.role, u.actif, u.doit_changer_mdp, u.responsable_id,
+    `SELECT u.id, u.identifiant, u.nom, u.prenoms, u.email, u.role, u.actif, u.doit_changer_mdp, u.responsable_id, u.militant_id,
             coalesce(json_agg(json_build_object('commune_id', p.commune_id, 'quartier_id', p.quartier_id))
                      FILTER (WHERE p.commune_id IS NOT NULL), '[]') AS perimetres
      FROM utilisateurs u LEFT JOIN utilisateur_perimetres p ON p.utilisateur_id = u.id

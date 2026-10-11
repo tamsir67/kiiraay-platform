@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle2, History, Pencil, RotateCcw, ShieldAlert, UserMinus, Flag } from 'lucide-react';
+import QRCode from 'qrcode';
+import { CheckCircle2, CreditCard, History, Pencil, RotateCcw, ShieldAlert, UserMinus, Flag, Printer } from 'lucide-react';
 import { api } from '../api/client';
 import { Chargement, Confirmer, Drawer, Field, Notice, StatutPill, messageErreur, useToast } from '../components/ui';
 import { useAuth } from '../lib/auth';
 import { useReferentiels } from '../lib/hooks';
 import { date, dateHeure, tel } from '../lib/format';
+import logo from '../logo-kiiraay.jpg';
 
 const LIBELLES: Record<string, string> = {
-  nom: 'Nom', prenoms: 'Prénoms', sexe: 'Sexe', date_naissance: 'Date de naissance', telephone: 'Téléphone', telephone2: 'Téléphone 2',
+  nom: 'Nom', prenoms: 'Prénoms', sexe: 'Sexe', date_naissance: 'Date de naissance', numero_cni: 'Numéro carte d’identification', telephone: 'Téléphone', telephone2: 'Téléphone 2',
   email: 'Email', adresse: 'Adresse', repere: 'Repère', quartier_id: 'Quartier', commune_id: 'Commune', secteur_id: 'Secteur',
   latitude: 'Latitude', longitude: 'Longitude', statut: 'Statut', commissaire_id: 'Commissaire', superviseur_id: 'Superviseur',
   coordonnateur_id: 'Coordonnateur', source: 'Source', observations: 'Observations', information_personne: 'Personne informée',
@@ -24,9 +26,28 @@ export function FicheMilitant({ id, onClose, onModifier }: { id: string; onClose
   const [desactiver, setDesactiver] = useState(false);
   const [motif, setMotif] = useState('');
   const [commentaire, setCommentaire] = useState('');
+  const [carteAdhesion, setCarteAdhesion] = useState(false);
+  const [qrCode, setQrCode] = useState('');
   const { data: ref } = useReferentiels();
   const { data: m, isLoading, error } = useQuery({ queryKey: ['militant', id], queryFn: () => api.get(`/militants/${id}`) });
   const { data: hist } = useQuery({ queryKey: ['militant-hist', id], queryFn: () => api.get(`/militants/${id}/historique`), enabled: onglet === 'historique' });
+
+  useEffect(() => {
+    if (!carteAdhesion || !m) return;
+    const payload = `KIIRAAY|M|${m.numero}|${m.nom}|${m.prenoms}|${m.commune || ''}|${m.quartier || ''}|${m.statut || ''}`;
+    let cancelled = false;
+    QRCode.toDataURL(payload, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 220,
+      color: { dark: '#10233a', light: '#ffffff' },
+    }).then((url) => {
+      if (!cancelled) setQrCode(url);
+    }).catch(() => {
+      if (!cancelled) setQrCode('');
+    });
+    return () => { cancelled = true; };
+  }, [carteAdhesion, m]);
 
   async function action(chemin: string, msg: string, body?: any) {
     try {
@@ -34,6 +55,10 @@ export function FicheMilitant({ id, onClose, onModifier }: { id: string; onClose
       toast(msg);
       for (const k of ['militant', 'militant-hist', 'militants', 'dashboard']) qc.invalidateQueries({ queryKey: [k] });
     } catch (e) { toast(messageErreur(e), true); }
+  }
+
+  function imprimerCarte() {
+    window.print();
   }
 
   return (
@@ -53,8 +78,49 @@ export function FicheMilitant({ id, onClose, onModifier }: { id: string; onClose
         {['ACTIF', 'EN_ATTENTE'].includes(m.statut) && can('militants:ecrire') && <button className="btn" onClick={() => action('a-verifier', 'Fiche signalée à vérifier')}><Flag size={14} /> À vérifier</button>}
         {['EN_ATTENTE', 'A_VERIFIER'].includes(m.statut) && can('militants:valider') && <button className="btn" onClick={() => action('valider', 'Fiche validée')}><CheckCircle2 size={14} /> Valider</button>}
         {m.statut !== 'INACTIF' && can('militants:ecrire') && <button className="btn primary" onClick={() => onModifier(m)}><Pencil size={14} /> Modifier</button>}
+        <button className="btn" onClick={() => setCarteAdhesion(true)}><CreditCard size={14} /> Carte d'adhésion</button>
       </>}
     >
+      {carteAdhesion && m && (
+        <div className="carte-adhesion-modal no-print">
+          <div className="carte-adhesion-actions">
+            <button className="btn primary" onClick={imprimerCarte}><Printer size={14} /> Imprimer / PDF</button>
+            <button className="btn" onClick={() => setCarteAdhesion(false)}>Fermer</button>
+          </div>
+          <div id="carte-adhesion-print" className="carte-adhesion-card">
+            <div className="carte-adhesion-header">
+              <div className="carte-adhesion-brand">
+                <img src={logo} alt="Logo KIIRAAY" />
+                <div>
+                  <div className="carte-adhesion-name">KII<span>RAAY</span></div>
+                  <div className="carte-adhesion-subtitle">Les Patriotes Républicains</div>
+                </div>
+              </div>
+              <div className="carte-adhesion-badge">N° {m.numero}</div>
+            </div>
+            <div className="carte-adhesion-body">
+              <div className="carte-adhesion-identite">
+                <div className="carte-adhesion-label">Carte d'adhésion</div>
+                <h3>{m.prenoms} {m.nom}</h3>
+                <dl>
+                  <div><dt>Statut</dt><dd>{m.statut}</dd></div>
+                  <div><dt>Commune</dt><dd>{m.commune || '—'}</dd></div>
+                  <div><dt>Quartier</dt><dd>{m.quartier || '—'}</dd></div>
+                  <div><dt>Téléphone</dt><dd>{m.telephone ? tel(m.telephone) : '—'}</dd></div>
+                </dl>
+              </div>
+              <div className="carte-adhesion-qrcode">
+                {qrCode ? <img src={qrCode} alt={`QR code de ${m.prenoms} ${m.nom}`} /> : <div className="carte-adhesion-qrcode-empty">QR code</div>}
+                <div className="carte-adhesion-qr-label">Vérification d'adhésion</div>
+              </div>
+            </div>
+            <div className="carte-adhesion-footer">
+              <span>Valide pour l'identification lors des événements et réunions.</span>
+              <span>Scannez pour vérifier l’adhésion KIIRAAY.</span>
+            </div>
+          </div>
+        </div>
+      )}
       {error && <Notice type="crit">{messageErreur(error)}</Notice>}
       {isLoading || !m ? <Chargement h={300} /> : onglet === 'fiche' ? (
         <>
@@ -66,6 +132,7 @@ export function FicheMilitant({ id, onClose, onModifier }: { id: string; onClose
               <dt>Nom complet</dt><dd>{m.prenoms} {m.nom}</dd>
               <dt>Sexe</dt><dd>{m.sexe === 'F' ? 'Femme' : 'Homme'}</dd>
               <dt>Date de naissance</dt><dd>{m.date_naissance ? `${date(m.date_naissance)} (${m.age} ans)` : '—'}</dd>
+              <dt>Numéro carte d’identification</dt><dd className="mono">{m.numero_cni || '—'}</dd>
             </dl>
           </fieldset>
           <fieldset><legend>Coordonnées</legend>

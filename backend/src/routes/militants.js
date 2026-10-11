@@ -4,9 +4,9 @@ import { pool, query, transaction } from '../db.js';
 import { asyncH, HttpError } from '../errors.js';
 import { exiger, verifierAccesQuartier } from '../auth.js';
 import { filtresMilitants, schemaFiltres } from '../filtres.js';
-import { colonnesTelephone, dechiffrer } from '../crypto.js';
+import { chiffrer, colonnesTelephone, dechiffrer, indexAveugle } from '../crypto.js';
 import { journaliser } from '../audit.js';
-import { can, normaliserTelephone } from '../../../shared/referentiel.js';
+import { can, normaliserNumeroCni, normaliserTelephone } from '../../../shared/referentiel.js';
 
 export const router = Router();
 
@@ -23,6 +23,8 @@ export const schemaMilitant = z.object({
   sexe: z.enum(['M', 'F'], { errorMap: () => ({ message: 'Sexe obligatoire (M ou F)' }) }),
   date_naissance: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable()
     .refine((d) => !d || (new Date(d) <= new Date(Date.now() - 16 * 365.25 * 86400000)), 'Âge minimum : 16 ans'),
+  numero_cni: z.string().trim().optional().nullable().transform((v) => v ? v.replace(/[\s-]/g, '') : null)
+    .refine((v) => v == null || normaliserNumeroCni(v), 'Le numéro de carte d’identité doit contenir 13 chiffres'),
   telephone: optStr(30).refine((t) => !t || normaliserTelephone(t), 'Numéro de téléphone invalide'),
   telephone2: optStr(30).refine((t) => !t || normaliserTelephone(t), 'Numéro secondaire invalide'),
   email: optStr(160).refine((e) => !e || z.string().email().safeParse(e).success, 'Email invalide'),
@@ -135,8 +137,11 @@ async function verifierResponsables(client, d) {
 
 function colonnesEcriture(d) {
   const t1 = colonnesTelephone(d.telephone), t2 = colonnesTelephone(d.telephone2);
+  const numeroCni = normaliserNumeroCni(d.numero_cni);
   return {
     nom: d.nom.toUpperCase(), prenoms: d.prenoms, sexe: d.sexe, date_naissance: d.date_naissance || null,
+    numero_cni_chiffre: numeroCni ? chiffrer(numeroCni) : null,
+    numero_cni_index: numeroCni ? indexAveugle(numeroCni) : null,
     telephone_chiffre: t1.chiffre, telephone_index: t1.index, telephone_suffixe: t1.suffixe,
     telephone2_chiffre: t2.chiffre, telephone2_index: t2.index,
     email: d.email?.toLowerCase() || null, adresse: d.adresse, repere: d.repere,
@@ -226,9 +231,10 @@ async function chargerFiche(req, id) {
 function presenterFiche(m, user) {
   const pii = can(user.role, 'militants:pii');
   const out = { ...m };
-  for (const k of ['telephone_chiffre', 'telephone_index', 'telephone2_chiffre', 'telephone2_index', 'recherche', 'identite_norm', 'geom']) delete out[k];
+  for (const k of ['telephone_chiffre', 'telephone_index', 'telephone2_chiffre', 'telephone2_index', 'numero_cni_chiffre', 'numero_cni_index', 'recherche', 'identite_norm', 'geom']) delete out[k];
   out.telephone = pii ? dechiffrer(m.telephone_chiffre) : null;
   out.telephone2 = pii ? dechiffrer(m.telephone2_chiffre) : null;
+  out.numero_cni = pii ? dechiffrer(m.numero_cni_chiffre) : null;
   if (!pii) { out.adresse = null; out.repere = null; out.latitude = null; out.longitude = null; out.email = null; }
   return out;
 }
@@ -260,6 +266,7 @@ router.put('/:id', exiger('militants:ecrire'), asyncH(async (req, res) => {
   // Le numéro existant est conservé si le champ n'a pas été ressaisi (masqué côté client)
   if (req.body.telephone === undefined) d.telephone = dechiffrer(m.telephone_chiffre);
   if (req.body.telephone2 === undefined) d.telephone2 = dechiffrer(m.telephone2_chiffre);
+  if (req.body.numero_cni === undefined) d.numero_cni = dechiffrer(m.numero_cni_chiffre);
   const result = await transaction(req.user, async (client) => {
     await verifierResponsables(client, d);
     if (req.query.forcer !== 'true') {

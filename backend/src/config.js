@@ -25,6 +25,13 @@ export const config = {
   trustProxy: process.env.TRUST_PROXY === 'true',
   maxLoginAttempts: Number(process.env.MAX_LOGIN_ATTEMPTS || 5),
   lockMinutes: Number(process.env.LOCK_MINUTES || 15),
+  smtpHost: process.env.SMTP_HOST || '',
+  smtpPort: Number(process.env.SMTP_PORT || 587),
+  smtpSecure: process.env.SMTP_SECURE === 'true',
+  smtpUser: process.env.SMTP_USER || '',
+  smtpPass: process.env.SMTP_PASS || '',
+  smtpFrom: process.env.SMTP_FROM || '',
+  smtpCaCertFile: process.env.SMTP_CA_CERT_FILE || '',
   exportMaxRows: Number(process.env.EXPORT_MAX_ROWS || 50000),
   importMaxRows: Number(process.env.IMPORT_MAX_ROWS || 20000),
 };

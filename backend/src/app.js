@@ -21,6 +21,8 @@ import { router as responsables } from './routes/responsables.js';
 import { router as administration } from './routes/administration.js';
 import { router as qualite } from './routes/qualite.js';
 import { router as echanges } from './routes/echanges.js';
+import { router as espace } from './routes/espace.js';
+import { router as messagerie } from './routes/messagerie.js';
 
 export function creerApp() {
   const app = express();
@@ -60,6 +62,8 @@ export function creerApp() {
     next();
   });
   app.use('/api/militants', militants);
+  app.use('/api/espace', espace);
+  app.use('/api/messagerie', messagerie);
   app.use('/api/dashboard', dashboard);
   app.use('/api/carte', carte);
   app.use('/api/territoires', territoires);

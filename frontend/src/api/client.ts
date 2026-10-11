@@ -77,6 +77,7 @@ export const api = {
   get: <T = any>(path: string, params?: Params) => requete<T>('GET', path, undefined, params),
   post: <T = any>(path: string, body?: any, params?: Params) => requete<T>('POST', path, body ?? {}, params),
   put: <T = any>(path: string, body?: any, params?: Params) => requete<T>('PUT', path, body, params),
+  delete: <T = any>(path: string) => requete<T>('DELETE', path),
   /** Téléchargement d'un fichier (export) : déclenche l'enregistrement côté navigateur. */
   async telecharger(path: string, params?: Params) {
     if (DEMO) throw new ApiError(400, { erreur: "Les téléchargements sont désactivés dans la démo en ligne. Ils fonctionnent dans la plateforme installée (CSV / Excel, journalisés)." });

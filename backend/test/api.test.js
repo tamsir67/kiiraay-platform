@@ -109,6 +109,57 @@ test('cycle de vie : création, doublon, validation, modification, historique, d
   assert.equal((await api('coord.golfsud', 'POST', `/militants/${c.data.id}/desactiver`, { motif: 'ERREUR' })).status, 200);
 });
 
+test('inscription militante, validation admin et accès limité à sa fiche', async () => {
+  const terr = await api('admin', 'GET', '/territoires');
+  const quartier = terr.data.find((c) => c.code === 'GS').quartiers.find((x) => x.nom === 'Hamo 1');
+  const numero = `78${n7()}`;
+  const identifiant = `membre.${SUFFIXE}`;
+  const naissance = '1992-04-12';
+  const fiche = await api('admin', 'POST', '/militants', {
+    nom: 'Sow', prenoms: `Membre ${SUFFIXE}`, sexe: 'F', telephone: fmt(numero), quartier_id: quartier.id,
+    date_naissance: naissance, information_personne: true,
+  });
+  assert.equal(fiche.status, 201, JSON.stringify(fiche.data));
+  const demande = await api(null, 'POST', '/auth/inscription', {
+    identifiant, nom: 'Sow', prenoms: `Membre ${SUFFIXE}`, numero: fiche.data.numero,
+    date_naissance: naissance, telephone: fmt(numero), motDePasse: 'Membre@2027!ok',
+  });
+  assert.equal(demande.status, 202, JSON.stringify(demande.data));
+  const users = await api('admin', 'GET', '/utilisateurs');
+  const membre = users.data.find((u) => u.identifiant === identifiant);
+  assert.ok(membre);
+  assert.equal(membre.actif, false);
+  assert.equal(membre.numero_militant, fiche.data.numero);
+  assert.equal(membre.telephone, `+221${numero}`);
+  assert.equal((await api(null, 'POST', '/auth/login', { identifiant, motDePasse: 'Membre@2027!ok' })).status, 401);
+
+  const activation = await api('admin', 'PUT', `/utilisateurs/${membre.id}`, {
+    identifiant, email: null, telephone: membre.telephone, nom: membre.nom, prenoms: membre.prenoms,
+    role: membre.role, responsable_id: null, actif: true, perimetres: [],
+  });
+  assert.equal(activation.status, 200);
+  const connexion = await api(null, 'POST', '/auth/login', { identifiant, motDePasse: 'Membre@2027!ok' });
+  assert.equal(connexion.status, 200);
+  jetons[identifiant] = connexion.data.accessToken;
+  assert.equal((await api(identifiant, 'GET', '/espace/mon-espace')).data.id, fiche.data.id);
+  assert.equal((await api(identifiant, 'GET', '/militants')).status, 403);
+});
+
+test('messagerie : conversation privée entre deux comptes actifs', async () => {
+  const users = await api('admin', 'GET', '/utilisateurs');
+  const membre = users.data.find((u) => u.role === 'MILITANT' && u.actif);
+  const admin = users.data.find((u) => u.role === 'ADMIN' && u.actif);
+  assert.ok(membre && admin);
+  const ouvert = await api('admin', 'POST', '/messagerie/conversations', { utilisateur_id: membre.id });
+  assert.equal(ouvert.status, 200);
+  const envoye = await api(membre.identifiant, 'POST', `/messagerie/conversations/${ouvert.data.id}/messages`, { contenu: `Bonjour ${SUFFIXE}` });
+  assert.equal(envoye.status, 201);
+  const lu = await api('admin', 'GET', `/messagerie/conversations/${ouvert.data.id}/messages`);
+  assert.equal(lu.status, 200);
+  assert.equal(lu.data.at(-1).contenu, `Bonjour ${SUFFIXE}`);
+  assert.equal((await api('decideur', 'GET', `/messagerie/conversations/${ouvert.data.id}/messages`)).status, 404);
+});
+
 test('données sensibles : téléphones chiffrés en base et masqués dans les listes', async () => {
   const r = await api('admin', 'GET', '/militants?taille=5');
   for (const m of r.data.resultats) {

@@ -36,16 +36,18 @@ export const ROLES = {
   COMMISSAIRE: 'Commissaire',
   OPERATEUR: 'Opérateur de saisie',
   DECIDEUR: 'Décideur / Consultation',
+  MILITANT: 'Militant',
 };
 
 // Matrice des droits (CDC §4). Toute vérification côté API passe par ici.
 export const PERMISSIONS = {
-  ADMIN:         ['dashboard', 'carte:points', 'militants:lire', 'militants:ecrire', 'militants:valider', 'militants:desactiver', 'militants:pii', 'export', 'export:pii', 'import', 'responsables:gerer', 'territoires:gerer', 'utilisateurs:gerer', 'audit:lire', 'qualite'],
-  COORDONNATEUR: ['dashboard', 'carte:points', 'militants:lire', 'militants:ecrire', 'militants:valider', 'militants:desactiver', 'militants:pii', 'export', 'export:pii', 'import', 'responsables:gerer', 'qualite'],
-  SUPERVISEUR:   ['dashboard', 'carte:points', 'militants:lire', 'militants:ecrire', 'militants:pii', 'export', 'qualite'],
-  COMMISSAIRE:   ['dashboard', 'carte:points', 'militants:lire', 'militants:ecrire', 'militants:pii'],
-  OPERATEUR:     ['militants:lire', 'militants:ecrire', 'militants:pii', 'import'],
-  DECIDEUR:      ['dashboard'],
+  ADMIN:         ['dashboard', 'carte:points', 'militants:lire', 'militants:ecrire', 'militants:valider', 'militants:desactiver', 'militants:pii', 'export', 'export:pii', 'import', 'responsables:gerer', 'territoires:gerer', 'utilisateurs:gerer', 'audit:lire', 'qualite', 'messagerie'],
+  COORDONNATEUR: ['dashboard', 'carte:points', 'militants:lire', 'militants:ecrire', 'militants:valider', 'militants:desactiver', 'militants:pii', 'export', 'export:pii', 'import', 'responsables:gerer', 'qualite', 'messagerie'],
+  SUPERVISEUR:   ['dashboard', 'carte:points', 'militants:lire', 'militants:ecrire', 'militants:pii', 'export', 'qualite', 'messagerie'],
+  COMMISSAIRE:   ['dashboard', 'carte:points', 'militants:lire', 'militants:ecrire', 'militants:pii', 'messagerie'],
+  OPERATEUR:     ['militants:lire', 'militants:ecrire', 'militants:pii', 'import', 'messagerie'],
+  DECIDEUR:      ['dashboard', 'messagerie'],
+  MILITANT:      ['espace:personnel', 'messagerie'],
 };
 
 export const can = (role, perm) => (PERMISSIONS[role] || []).includes(perm);
@@ -116,6 +118,12 @@ export function formaterTelephone(e164) {
   if (!e164) return '';
   const l = e164.replace(/^\+221/, '');
   return l.length === 9 ? `${l.slice(0, 2)} ${l.slice(2, 5)} ${l.slice(5, 7)} ${l.slice(7)}` : e164;
+}
+
+export function normaliserNumeroCni(raw) {
+  if (raw == null) return null;
+  const numero = String(raw).replace(/[\s-]/g, '');
+  return /^\d{13}$/.test(numero) ? numero : null;
 }
 
 // Normalisation pour comparaison (accents, casse, espaces)

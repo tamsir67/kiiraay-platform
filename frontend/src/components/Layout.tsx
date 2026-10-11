@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Map, FileBarChart, ShieldCheck, ArrowDownUp, Network, Landmark, UserCog,
-  ScrollText, LogOut, Menu, Moon, Sun, FlaskConical,
+  ScrollText, LogOut, Menu, Moon, Sun, FlaskConical, MessageCircle, CreditCard,
 } from 'lucide-react';
 import logo from '../logo-kiiraay.jpg';
 import { useAuth } from '../lib/auth';
@@ -16,6 +16,7 @@ const NAV = [
   { to: '/carte', label: 'Cartographie', icon: Map, perm: 'dashboard' },
   { to: '/rapports', label: 'Rapports', icon: FileBarChart, perm: 'dashboard' },
   { groupe: 'Militants' },
+  { to: '/espace', label: 'Mon espace', icon: CreditCard, perm: 'espace:personnel' },
   { to: '/militants', label: 'Fichier militants', icon: Users, perm: 'militants:lire' },
   { to: '/qualite', label: 'Qualité des données', icon: ShieldCheck, perm: 'qualite' },
   { to: '/echanges', label: 'Import / Export', icon: ArrowDownUp, perm: ['import', 'export'] },
@@ -25,6 +26,8 @@ const NAV = [
   { groupe: 'Administration' },
   { to: '/utilisateurs', label: 'Utilisateurs', icon: UserCog, perm: 'utilisateurs:gerer' },
   { to: '/journal', label: "Journal d'audit", icon: ScrollText, perm: 'audit:lire' },
+  { groupe: 'Communication' },
+  { to: '/messages', label: 'Messagerie', icon: MessageCircle, perm: 'messagerie' },
 ] as const;
 
 function lireTheme(): string | null { try { return localStorage.getItem('kry-theme'); } catch { return null; } }

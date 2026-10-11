@@ -1,18 +1,21 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { KeyRound, Pencil, Plus, ShieldCheck, Unlock, Copy } from 'lucide-react';
+import { KeyRound, Pencil, Plus, ShieldCheck, Unlock, Copy, Trash2 } from 'lucide-react';
 import { api } from '../api/client';
 import { Page } from '../components/Layout';
-import { Chargement, Drawer, Field, Modal, Notice, Panel, messageErreur, useToast } from '../components/ui';
+import { Chargement, Confirmer, Drawer, Field, Modal, Notice, Panel, messageErreur, useToast } from '../components/ui';
 import { useResponsables, useTerritoires } from '../lib/hooks';
+import { useAuth } from '../lib/auth';
 import { ROLES } from '@shared/referentiel.js';
 import { dateHeure, n, relatif } from '../lib/format';
 
 // =============================================================== Utilisateurs
 export function Utilisateurs() {
+  const { user } = useAuth();
   const { data, isLoading } = useQuery({ queryKey: ['utilisateurs'], queryFn: () => api.get('/utilisateurs') });
   const [edit, setEdit] = useState<any | null>(null);
   const [secret, setSecret] = useState<{ identifiant: string; mdp: string } | null>(null);
+  const [desactiver, setDesactiver] = useState<any | null>(null);
   const toast = useToast();
   const qc = useQueryClient();
 
@@ -22,6 +25,10 @@ export function Utilisateurs() {
   async function deverrouiller(u: any) {
     try { await api.post(`/utilisateurs/${u.id}/deverrouiller`); toast('Compte déverrouillé'); qc.invalidateQueries({ queryKey: ['utilisateurs'] }); } catch (e) { toast(messageErreur(e), true); }
   }
+  async function retirer(u: any) {
+    try { await api.delete(`/utilisateurs/${u.id}`); toast('Compte désactivé'); qc.invalidateQueries({ queryKey: ['utilisateurs'] }); setDesactiver(null); }
+    catch (e) { toast(messageErreur(e), true); }
+  }
 
   return (
     <Page eyebrow="Administration" titre="Utilisateurs et droits" actions={<button className="btn primary" onClick={() => setEdit({ role: 'COMMISSAIRE', perimetres: [], actif: true })}><Plus size={15} /> Nouvel utilisateur</button>}>
@@ -29,12 +36,13 @@ export function Utilisateurs() {
         {isLoading ? <div className="panel-b"><Chargement h={300} /></div> : (
           <div className="table-wrap">
             <table className="data">
-              <thead><tr><th>Utilisateur</th><th>Profil</th><th>Périmètre</th><th>Dernière connexion</th><th>État</th><th /></tr></thead>
+              <thead><tr><th>Utilisateur</th><th>Profil</th><th>Contact / fiche</th><th>Périmètre</th><th>Dernière connexion</th><th>État</th><th /></tr></thead>
               <tbody>
                 {data?.map((u: any) => (
                   <tr key={u.id}>
                     <td className="who-cell"><b>{u.prenoms} {u.nom}</b><span className="mono">@{u.identifiant}</span></td>
                     <td>{(ROLES as any)[u.role]}</td>
+                    <td className="who-cell"><b>{u.email || '—'}</b><span className="mono">{u.telephone || u.numero_militant || '—'}</span></td>
                     <td className="muted" style={{ fontSize: 'var(--fs-xs)', maxWidth: 260 }}>{u.perimetres.length ? u.perimetres.map((p: any) => p.quartier || p.commune).join(', ') : 'Tout le département'}</td>
                     <td className="muted">{relatif(u.derniere_connexion)}</td>
                     <td>
@@ -46,6 +54,7 @@ export function Utilisateurs() {
                         {u.verrouille && <button className="btn ghost sm" title="Déverrouiller" onClick={() => deverrouiller(u)}><Unlock size={13} /></button>}
                         <button className="btn ghost sm" title="Réinitialiser le mot de passe" onClick={() => reinit(u)}><KeyRound size={13} /></button>
                         <button className="btn ghost sm" title="Modifier" onClick={() => setEdit(u)}><Pencil size={13} /></button>
+                        {u.actif && u.id !== user?.id && <button className="btn ghost sm" title="Désactiver le compte" onClick={() => setDesactiver(u)}><Trash2 size={13} /></button>}
                       </div>
                     </td>
                   </tr>
@@ -57,6 +66,7 @@ export function Utilisateurs() {
       </Panel>
       <MatriceDroits />
       {edit && <FormUtilisateur initial={edit} onClose={() => setEdit(null)} onSecret={setSecret} />}
+      {desactiver && <Confirmer titre="Désactiver le compte" message={<>Le compte de <b>{desactiver.prenoms} {desactiver.nom}</b> sera déconnecté. Son historique sera conservé.</>} libelle="Désactiver" danger onClose={() => setDesactiver(null)} onOk={() => retirer(desactiver)} />}
       {secret && (
         <Modal titre="Mot de passe temporaire" onClose={() => setSecret(null)} pied={<button className="btn primary" onClick={() => setSecret(null)}>J'ai transmis le mot de passe</button>}>
           <p>Transmettez ce mot de passe à <b>@{secret.identifiant}</b> par un canal sûr. Il ne sera plus affiché et devra être changé à la première connexion.</p>
@@ -76,6 +86,7 @@ function MatriceDroits() {
     ['militants:ecrire', 'Créer / modifier'], ['militants:valider', 'Valider les fiches'], ['militants:desactiver', 'Désactiver'],
     ['import', 'Importer'], ['export', 'Exporter'], ['export:pii', 'Export complet (tél., adresse)'], ['responsables:gerer', 'Gérer les responsables'],
     ['territoires:gerer', 'Paramétrer les territoires'], ['utilisateurs:gerer', 'Gérer les utilisateurs'], ['audit:lire', "Journal d'audit"],
+    ['espace:personnel', 'Espace personnel militant'], ['messagerie', 'Messagerie'],
   ];
   const { data: ref } = useQuery({ queryKey: ['referentiels'], queryFn: () => api.get('/referentiels') });
   if (!ref) return null;
@@ -99,7 +110,7 @@ function FormUtilisateur({ initial, onClose, onSecret }: { initial: any; onClose
   const { data: terr } = useTerritoires();
   const { data: resp } = useResponsables();
   const [f, setF] = useState<any>({
-    identifiant: initial.identifiant || '', email: initial.email || '', nom: initial.nom || '', prenoms: initial.prenoms || '',
+    identifiant: initial.identifiant || '', email: initial.email || '', telephone: initial.telephone || '', nom: initial.nom || '', prenoms: initial.prenoms || '',
     role: initial.role, responsable_id: initial.responsable_id || '', actif: initial.actif ?? true,
     perimetres: (initial.perimetres || []).map((p: any) => ({ commune_id: p.commune_id, quartier_id: p.quartier_id })),
   });
@@ -123,11 +134,12 @@ function FormUtilisateur({ initial, onClose, onSecret }: { initial: any; onClose
       <div className="form-grid">
         <Field label="Identifiant" requis aide="Lettres, chiffres, . _ -"><input id="u-id" className="input" value={f.identifiant} onChange={(e) => setF({ ...f, identifiant: e.target.value })} /></Field>
         <Field label="Email"><input id="u-email" className="input" type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} /></Field>
+        <Field label="Téléphone de contact"><input id="u-telephone" className="input" type="tel" autoComplete="tel" value={f.telephone} onChange={(e) => setF({ ...f, telephone: e.target.value })} /></Field>
         <Field label="Nom" requis><input id="u-nom" className="input" value={f.nom} onChange={(e) => setF({ ...f, nom: e.target.value })} /></Field>
         <Field label="Prénom(s)" requis><input id="u-prenoms" className="input" value={f.prenoms} onChange={(e) => setF({ ...f, prenoms: e.target.value })} /></Field>
         <Field label="Profil" requis className="full">
           <select id="u-role" className="input" value={f.role} onChange={(e) => setF({ ...f, role: e.target.value })}>
-            {Object.entries(ROLES).map(([k, v]: any) => <option key={k} value={k}>{v}</option>)}
+            {Object.entries(ROLES).filter(([k]) => initial.id || k !== 'MILITANT').map(([k, v]: any) => <option key={k} value={k}>{v}</option>)}
           </select>
         </Field>
         <Field label="Responsable lié" className="full" aide="Optionnel : relie le compte à une personne de la chaîne">

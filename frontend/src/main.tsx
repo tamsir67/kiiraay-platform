@@ -25,6 +25,8 @@ import { Echanges } from './pages/Echanges';
 import { Responsables } from './pages/Responsables';
 import { Territoires } from './pages/Territoires';
 import { Utilisateurs, Journal } from './pages/Administration';
+import { EspaceMilitant } from './pages/EspaceMilitant';
+import { Messagerie } from './pages/Messagerie';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,7 +49,9 @@ function Racine() {
     <FiltresProvider>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={can('dashboard') ? <Dashboard /> : <Navigate to="/militants" replace />} />
+          <Route index element={can('dashboard') ? <Dashboard /> : can('espace:personnel') ? <Navigate to="/espace" replace /> : <Navigate to="/militants" replace />} />
+          <Route path="espace" element={<Garde perm="espace:personnel"><EspaceMilitant /></Garde>} />
+          <Route path="messages" element={<Garde perm="messagerie"><Messagerie /></Garde>} />
           <Route path="carte" element={<Garde perm="dashboard"><CartePage /></Garde>} />
           <Route path="rapports" element={<Garde perm="dashboard"><Rapports /></Garde>} />
           <Route path="militants" element={<Garde perm="militants:lire"><Militants /></Garde>} />
