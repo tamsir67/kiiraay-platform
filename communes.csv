@@ -1,0 +1,108 @@
+code_quartier;code_commune;commune;niveau;quartier;type_habitat;source;remarque
+GS-01;GS;Golf Sud;quartier;Cité Fadia;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-02;GS;Golf Sud;quartier;Rass Mission Unité 1/A P.A;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-03;GS;Golf Sud;quartier;Hamo 3;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-04;GS;Golf Sud;quartier;Unité 6/B;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-05;GS;Golf Sud;quartier;Guentaba;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-06;GS;Golf Sud;quartier;Cité Alioune Sow;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-07;GS;Golf Sud;quartier;Golf sud;;https://iga.sn/projet-sig-golf-sud-guediawaye/;Nom proche d'un autre quartier de la liste : à confirmer
+GS-08;GS;Golf Sud;quartier;Cité Douane;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-09;GS;Golf Sud;quartier;Guentaba 3;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-10;GS;Golf Sud;quartier;Guentaba 2;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-11;GS;Golf Sud;quartier;Unité 5/C;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-12;GS;Golf Sud;quartier;Unité 6/A;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-13;GS;Golf Sud;quartier;Cité des Enseignants;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-14;GS;Golf Sud;quartier;Atepa Ibrahima Diop;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-15;GS;Golf Sud;quartier;Unité 2 Touba P.A;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-16;GS;Golf Sud;quartier;Unité 5/B;;https://iga.sn/projet-sig-golf-sud-guediawaye/;Doublon probable avec « Unité 5/B » / « P.A Unité 5/B »
+GS-17;GS;Golf Sud;quartier;Cité SHS;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-18;GS;Golf Sud;quartier;Cité Dalal Diam;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-19;GS;Golf Sud;quartier;Fayçal;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-20;GS;Golf Sud;quartier;P.A Unité 5/B;;https://iga.sn/projet-sig-golf-sud-guediawaye/;Doublon probable avec « Unité 5/B » / « P.A Unité 5/B »
+GS-21;GS;Golf Sud;quartier;Golf Nord Station;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-22;GS;Golf Sud;quartier;10 Fith-Mith;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-23;GS;Golf Sud;quartier;Taïba/Golf Sud;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-24;GS;Golf Sud;quartier;Unité 4/P.A;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-25;GS;Golf Sud;quartier;Golf Sud /B;;https://iga.sn/projet-sig-golf-sud-guediawaye/;Nom proche d'un autre quartier de la liste : à confirmer
+GS-26;GS;Golf Sud;quartier;Bloc 3/Hlm las Palmas;;https://iga.sn/projet-sig-golf-sud-guediawaye/;Plusieurs entrées « HLM Las Palmas » (blocs) : à confirmer
+GS-27;GS;Golf Sud;quartier;Hlm las Palmas/Bloc 1;;https://iga.sn/projet-sig-golf-sud-guediawaye/;Plusieurs entrées « HLM Las Palmas » (blocs) : à confirmer
+GS-28;GS;Golf Sud;quartier;Unité 1/B P.A;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-29;GS;Golf Sud;quartier;Hlm Las Palmas;;https://iga.sn/projet-sig-golf-sud-guediawaye/;Plusieurs entrées « HLM Las Palmas » (blocs) : à confirmer
+GS-30;GS;Golf Sud;quartier;Unité 6/C;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+GS-31;GS;Golf Sud;quartier;Cité littoral;;https://iga.sn/projet-sig-golf-sud-guediawaye/;
+SN-01;SN;Sam Notaire;quartier;Notaire Est;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-02;SN;Sam Notaire;quartier;Notaire Ouest;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-03;SN;Sam Notaire;quartier;Golf Nord;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-04;SN;Sam Notaire;quartier;Darou Salam 1;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-05;SN;Sam Notaire;quartier;Mbodd 1;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-06;SN;Sam Notaire;quartier;Mbodd 2;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-07;SN;Sam Notaire;quartier;Mbodd 3;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-08;SN;Sam Notaire;quartier;Mbodd 4;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-09;SN;Sam Notaire;quartier;Mbodd 5;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-10;SN;Sam Notaire;quartier;Golf Nord I bis;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-11;SN;Sam Notaire;quartier;Golf Nord Est;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-12;SN;Sam Notaire;quartier;Pyrotechnique;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-13;SN;Sam Notaire;quartier;Cité Diounkhop;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-14;SN;Sam Notaire;quartier;Notaire Sud;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-15;SN;Sam Notaire;quartier;Darou Salam 2;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-16;SN;Sam Notaire;quartier;Gibraltar I;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-17;SN;Sam Notaire;quartier;Gibraltar II;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-18;SN;Sam Notaire;quartier;Sam Guédiawaye;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-19;SN;Sam Notaire;quartier;Gueule Tapée II A;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-20;SN;Sam Notaire;quartier;Cité Préfecture;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-21;SN;Sam Notaire;quartier;Champ de courses;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-22;SN;Sam Notaire;quartier;Grand Médine;Lotissement de recasement;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-23;SN;Sam Notaire;quartier;HLM Paris;Habitat planifié;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-24;SN;Sam Notaire;quartier;Cité Barry et Ly;Habitat planifié;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-25;SN;Sam Notaire;quartier;Cité Adama Diop;Habitat planifié;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-26;SN;Sam Notaire;quartier;Hamo Téfess;Habitat planifié;https://fr.wikipedia.org/wiki/Sam_Notaire;
+SN-27;SN;Sam Notaire;quartier;Cité Urbanisme;Habitat planifié;https://fr.wikipedia.org/wiki/Sam_Notaire;
+NL-01;NL;Ndiarème Limamoulaye;quartier;Cité Sentenac;Habitat planifié;https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-02;NL;Ndiarème Limamoulaye;quartier;Hamo 4;Habitat planifié;https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-03;NL;Ndiarème Limamoulaye;quartier;Hamo 5;Habitat planifié;https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-04;NL;Ndiarème Limamoulaye;quartier;Hamo 6;Habitat planifié;https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-05;NL;Ndiarème Limamoulaye;quartier;Angle Mousse 2;Lotissement de recasement (auto-construction);https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-06;NL;Ndiarème Limamoulaye;quartier;Nimzatt 1;Lotissement de recasement (auto-construction);https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-07;NL;Ndiarème Limamoulaye;quartier;Nimzatt 2;Lotissement de recasement (auto-construction);https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-08;NL;Ndiarème Limamoulaye;quartier;Nimzatt 3;Lotissement de recasement (auto-construction);https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-09;NL;Ndiarème Limamoulaye;quartier;Cheick Wade;Lotissement de recasement (auto-construction);https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+NL-10;NL;Ndiarème Limamoulaye;quartier;Darou Naïm;Lotissement de recasement (auto-construction);https://fr.wikipedia.org/wiki/Ndiar%C3%A8me_Limamoulaye;
+WN-Z01;WN;Wakhinane Nimzatt;zone;Angle Mousse;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;
+WN-Z02;WN;Wakhinane Nimzatt;zone;Darourahmane;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;
+WN-Z03;WN;Wakhinane Nimzatt;zone;Comico-Gadaye;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;
+WN-Z04;WN;Wakhinane Nimzatt;zone;Le Littoral;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;"Zone citée par Wikipédia ; le mémoire UCAD (2010) cite « Kawsara » au lieu de « Le Littoral »"
+WN-Z05;WN;Wakhinane Nimzatt;zone;Touba-Guédiawaye;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;
+WN-Z06;WN;Wakhinane Nimzatt;zone;Baye Laye-Daroukhane;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;
+WN-Z07;WN;Wakhinane Nimzatt;zone;Wakhinane;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;
+WN-Z08;WN;Wakhinane Nimzatt;zone;Wakhinane 4;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;
+WN-Z09;WN;Wakhinane Nimzatt;zone;Nimzatt;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;
+WN-Z10;WN;Wakhinane Nimzatt;zone;Kawsara;;https://www.memoireonline.com/11/12/6495/m_Assainissement-et-risques-socio-sanitaires-et-environnementaux-dans-la-commune-darrondissement-de8.html;Zone citée par le mémoire UCAD (2010) à la place de « Le Littoral » : à trancher
+WN-11;WN;Wakhinane Nimzatt;quartier;Madieng Khary Dieng;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;Cité en exemple, zone non précisée
+WN-12;WN;Wakhinane Nimzatt;quartier;Darou Khoudoss;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;Cité en exemple, zone non précisée
+WN-13;WN;Wakhinane Nimzatt;quartier;Cité Abdel Kader Diouf;;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;Cité en exemple, zone non précisée
+WN-14;WN;Wakhinane Nimzatt;quartier;Cité Sonees;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-15;WN;Wakhinane Nimzatt;quartier;Cité Biagui;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-16;WN;Wakhinane Nimzatt;quartier;Cité ministère de la Santé;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-17;WN;Wakhinane Nimzatt;quartier;Cité Sofraco;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-18;WN;Wakhinane Nimzatt;quartier;Cité Forces armées;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-19;WN;Wakhinane Nimzatt;quartier;Cité Présidence;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-20;WN;Wakhinane Nimzatt;quartier;Cité Cour suprême;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-21;WN;Wakhinane Nimzatt;quartier;Cité SORES;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-22;WN;Wakhinane Nimzatt;quartier;Cité Sénelec;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+WN-23;WN;Wakhinane Nimzatt;quartier;Cité Air Afrique;Habitat planifié;https://fr.wikipedia.org/wiki/Wakhinane_Nimzatt;La source annonce 9 cités mais en nomme 10
+MG-01;MG;Médina Gounass;quartier;Médina Gounass 1;Habitat spontané;https://fr.wikipedia.org/wiki/M%C3%A9dina_Gounass;
+MG-02;MG;Médina Gounass;quartier;Médina Gounass 2;Habitat spontané;https://fr.wikipedia.org/wiki/M%C3%A9dina_Gounass;
+MG-03;MG;Médina Gounass;quartier;Médina Gounass 3;Habitat spontané;https://fr.wikipedia.org/wiki/M%C3%A9dina_Gounass;
+MG-04;MG;Médina Gounass;quartier;Médina Gounass 4;Habitat spontané;https://fr.wikipedia.org/wiki/M%C3%A9dina_Gounass;
+MG-05;MG;Médina Gounass;quartier;Bagdad 1;Habitat spontané;https://fr.wikipedia.org/wiki/M%C3%A9dina_Gounass;Une partie seulement de Bagdad est dans la commune
+MG-06;MG;Médina Gounass;quartier;Bagdad 2;Habitat spontané;https://fr.wikipedia.org/wiki/M%C3%A9dina_Gounass;Une partie seulement de Bagdad est dans la commune
+MG-07;MG;Médina Gounass;quartier;Parc;Habitat spontané;https://fr.wikipedia.org/wiki/M%C3%A9dina_Gounass;
+MG-08;MG;Médina Gounass;quartier;CFA;Habitat spontané;https://fr.wikipedia.org/wiki/M%C3%A9dina_Gounass;
+
+# Statistiques par commune
+code_commune;commune;departement;region;arrondissement;population_rgph_2023;nb_quartiers_annonce;nb_quartiers_dans_fichier;liste_complete;remarque;source
+GS;Golf Sud;Guédiawaye;Dakar;Sam Notaire;114069;35;31;non;31 noms trouvés sur 35 annoncés (projet SIG de la commune);https://www.vie-publique.sn/collectivites-territoriales/departements/guediawaye
+SN;Sam Notaire;Guédiawaye;Dakar;Sam Notaire;80566;25;27;à vérifier;27 noms listés alors que la source annonce 25 quartiers;https://www.vie-publique.sn/collectivites-territoriales/departements/guediawaye
+NL;Ndiarème Limamoulaye;Guédiawaye;Dakar;Wakhinane Nimzatt;36024;10;10;oui;10 quartiers, liste complète selon la source;https://www.vie-publique.sn/collectivites-territoriales/departements/guediawaye
+WN;Wakhinane Nimzatt;Guédiawaye;Dakar;Wakhinane Nimzatt;105461;;13;non;"9 zones de 4 à 9 quartiers chacune ; seuls 13 quartiers sont nommés dans les sources";https://www.vie-publique.sn/collectivites-territoriales/departements/guediawaye
+MG;Médina Gounass;Guédiawaye;Dakar;Wakhinane Nimzatt;36588;42;8;non;8 quartiers nommés sur 42 annoncés;https://www.vie-publique.sn/collectivites-territoriales/departements/guediawaye
